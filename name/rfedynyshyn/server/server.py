@@ -1,15 +1,11 @@
+import json
 from autobahn.twisted.websocket import WebSocketServerProtocol, WebSocketServerFactory
 import redis
-from twisted.python import log
-from twisted.internet import reactor
-
-import sys
 
 __author__ = 'rostyslavfedynyshyn'
 
 
 class MyServerProtocol(WebSocketServerProtocol):
-
     def onConnect(self, request):
         print("Client connecting: {0}".format(request.peer))
 
@@ -17,23 +13,27 @@ class MyServerProtocol(WebSocketServerProtocol):
         print("WebSocket connection open.")
 
     def onMessage(self, payload, isBinary):
-        if isBinary:
-            print("Binary message received: {0} bytes".format(len(payload)))
-        else:
-            print '--'
-            redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
-            redis_client.lpush('list', payload.decode('utf8'))
-            print("Text message received: {0}".format(payload.decode('utf8')))
+        redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+        request_params = json.loads(payload)
+        name = request_params["name"]
+        score = request_params["score"]
+        redis_client.zincrby('leaderboard', value=name, amount=score)
+        print("Text message received: {0}".format(payload))
 
-        # echo back message verbatim
-        self.sendMessage(str(redis_client.llen('list')), isBinary)
+        redis_result = redis_client.zrevrange('leaderboard', 0, 20, withscores=True)
+        print redis_result
 
-    def onClose(self, wasClean, code, reason):
+        normalized_result = [(name.decode("utf-8"), int(score)) for name, score in redis_result]
+        print normalized_result
+        response = json.dumps(normalized_result)
+        self.sendMessage(response, isBinary)
+
+
+    def onClose(self, was_clean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
 
 
 if __name__ == '__main__':
-
     import sys
 
     from twisted.python import log

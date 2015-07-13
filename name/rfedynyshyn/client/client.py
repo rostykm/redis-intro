@@ -7,6 +7,7 @@ import sys
 
 __author__ = 'rostyslavfedynyshyn'
 
+
 def sleep(delay):
     d = Deferred()
     reactor.callLater(delay, d.callback, None)
@@ -36,14 +37,12 @@ class MyClientProtocol(WebSocketClientProtocol):
     def onClose(self, was_clean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
 
-
-
 if __name__ == '__main__':
-
     log.startLogging(sys.stdout)
 
-    factory = WebSocketClientFactory("ws://localhost:9000", debug=False)
+    factory = WebSocketClientFactory("ws://localhost:9000/add", debug=False)
     factory.protocol = MyClientProtocol
 
     reactor.connectTCP("127.0.0.1", 9000, factory)
     reactor.run()
+
