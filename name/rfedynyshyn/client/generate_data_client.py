@@ -39,13 +39,7 @@ class LeaderBoardLoadGeneratorClient(WebSocketClientProtocol):
 
         while True:
             self.sendMessage(self.submit_random_score())
-            yield sleep(0.3)
-
-    def onMessage(self, payload, isBinary):
-        if isBinary:
-            print("Binary message received: {0} bytes".format(len(payload)))
-        else:
-            print("Text message received: {0}".format(payload.decode('utf8')))
+            yield sleep(0.5)
 
     def onClose(self, was_clean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))

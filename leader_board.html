@@ -6,16 +6,33 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+     <style type="text/css">
+        h1 {
+            text-align: center;
+            padding-bottom: 1em;
+            font-size: 22px;
+            color: #FFFFFF;
+        }
+        #content {
+            width: 40%;
+            margin: 0 auto;
+            color: #FFFFFF;
+            background-color: #1F1F0F;
+        }
+         body {
+            color: #FFFFFF;
+            background-color: #1F1F0F;
+        }
+    </style>
 <head>
     <script type="text/javascript">
          var itemCount = 20;
 
         function refreshLeaderboard() {
-         var leaderboardSocket = new WebSocket("ws://localhost:9000");
+         var leaderboardSocket = new WebSocket("ws://localhost:9000/top");
          leaderboardSocket.onopen = function(event) {
             var topRequestParams = {
-                "name": "",
-                "score": 0
+                "number": 20
             };
             leaderboardSocket.send(JSON.stringify(topRequestParams));
          };
@@ -41,24 +58,20 @@
 
     </script>
 </head>
-</head>
-<body>
-<p>Open your browser's JavaScript console to see what's happening (hit F12).</p>
-<!--<button onclick='sendText();'>Send Text Message</button>-->
 
+<body>
 <div id="content">
     <h1>Leaderboard</h1>
 
     <table id="topTable" class="table">
         <thead>
-        <tr>
-            <th width="75">Rank</th>
-            <th width="200">Name</th>
-            <th width="100">Score</th>
-        </tr>
+            <tr>
+                <th width="75">Rank</th>
+                <th width="200">Name</th>
+                <th width="100">Score</th>
+            </tr>
         </thead>
         <tbody>
-
         </tbody>
     </table>
 </div>
